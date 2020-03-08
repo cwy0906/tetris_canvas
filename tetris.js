@@ -36,26 +36,22 @@ var polyominoKindList   = [ [[5,1],[4,0],[4,1],[6,1]], [[5,1],[6,0],[4,1],[6,1]]
 var polyominoColorList  = [ "#0040FF", "#FFBF00",
                             "#8000FF", "#40FF00",
                             "#FF0000", "#00FFFF",
-                            "#FFFF00" ];
+                            "#F5ED00" ];
 var polyominoSpinList   = [  0, 0,
                              0, 0,
                              0, 1,
                              2 ];                            
 
 //骨牌設定測試1
-var polyominoCode       = getRandomInt(0,6);
+var polyominoCode       = getRandomInt(0,7);
 var polyominoArray      = JSON.parse(JSON.stringify(polyominoKindList[polyominoCode]));
 var polyominoColor      = polyominoColorList[polyominoCode];
 var polyominoSpin       = polyominoSpinList[polyominoCode];
-var nextPolyominoCode   = getRandomInt(0,6);
+var nextPolyominoCode   = getRandomInt(0,7);
 var nextPolyominoArray  = JSON.parse(JSON.stringify(polyominoKindList[nextPolyominoCode]));
 var nextPolyominoColor  = polyominoColorList[nextPolyominoCode];
 var nextPolyominoSpin   = polyominoSpinList[nextPolyominoCode];
 var counter = 0;
-
-//骨牌測試2
-// var polyominoArray      = [[5,1],[4,0],[4,1],[6,1]];
-// var nextPolyominoArray  = [[5,1],[4,0],[4,1],[6,1]];
 
 //設定鍵盤監聽事件
 document.addEventListener("keypress", keyPressHandler, false);
@@ -188,7 +184,6 @@ function draw() {
 }
 
 function drawGameOver() {
-    // ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.clearRect(0, 0, 400, canvas.height);
     drawBackground();   
     drawGridLines();
@@ -355,7 +350,7 @@ function isSpinAble() {
     let yJudge    = array[0][1];
     let boolJudge = false;
 
-    if( xJudge>=1 && xJudge<=9 && yJudge>=1 && yJudge<=18 && polyominoCode!= 5){
+    if( xJudge>=1 && xJudge<=9 && yJudge>=1 && yJudge<=18 && polyominoCode!= 5 && polyominoCode!= 6){
         let grid_01   = arrayBackground[yJudge-1][xJudge-1];
         let grid_02   = arrayBackground[yJudge-1][xJudge];
         let grid_03   = arrayBackground[yJudge-1][xJudge+1];
@@ -367,8 +362,18 @@ function isSpinAble() {
         if( (grid_01+grid_02+grid_03+grid_04+grid_06+grid_07+grid_08+grid_09)===0 ) {
             boolJudge = true;
         }
-    }else if( polyominoCode=== 5){
+    }else if( polyominoCode=== 5 ){
         boolJudge = false;    
+    }else if( xJudge>=2 && xJudge<=8 && yJudge>=2 && yJudge<=17 && polyominoCode=== 6 ){
+        let grid_01  =  arrayBackground[yJudge-1][xJudge];
+        let grid_02  =  arrayBackground[yJudge+1][xJudge];
+        let grid_03  =  arrayBackground[yJudge+2][xJudge];
+        let grid_04  =  arrayBackground[yJudge][xJudge-1];
+        let grid_05  =  arrayBackground[yJudge][xJudge+1];
+        let grid_06  =  arrayBackground[yJudge][xJudge+2];
+        if( (grid_01+grid_02+grid_03+grid_04+grid_06)===0 ) {
+            boolJudge = true;
+        }
     }
 
     return boolJudge;
@@ -423,7 +428,7 @@ function summaryResults() {
 }
 
 function getNewPolyomino() {
-    let code  = getRandomInt(0,6);
+    let code  = getRandomInt(0,7);
     let array = JSON.parse(JSON.stringify(polyominoKindList[code]));
     nextPolyominoCode   = code;
     nextPolyominoArray  = array;
@@ -495,7 +500,7 @@ function drawNextInfom(array) {
     ctx.beginPath();
     ctx.fillStyle = nextPolyominoColor;
     array.forEach(function(element) {
-        xOrder = element[0]+1;    
+        xOrder = element[0];    
         yOrder = element[1]+1;
         ctx.fillRect(420+15*xOrder, 200+15*yOrder, 15, 15);
     });

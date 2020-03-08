@@ -28,11 +28,11 @@ for(let i=0; i<20; i++) {
     }    
 }
 
-//骨牌對照瑪(0:J,1:L,2:T,3:S,4:Z,5:I,6:O)
+//骨牌對照瑪(0:J,1:L,2:T,3:S,4:Z,5:O,6:I)
 var polyominoKindList   = [ [[5,1],[4,0],[4,1],[6,1]], [[5,1],[6,0],[4,1],[6,1]],
                             [[5,1],[5,0],[4,1],[6,1]], [[5,1],[5,0],[6,0],[4,1]],
-                            [[5,1],[4,0],[5,0],[6,1]], [[5,1],[4,1],[6,1],[7,1]],
-                            [[5,1],[4,0],[5,0],[4,1]] ];
+                            [[5,1],[4,0],[5,0],[6,1]], [[5,1],[4,0],[5,0],[4,1]],
+                            [[5,1],[4,1],[6,1],[7,1]],                         ];
 var polyominoColorList  = [ "#0040FF", "#FFBF00",
                             "#8000FF", "#40FF00",
                             "#FF0000", "#00FFFF",
@@ -43,11 +43,11 @@ var polyominoSpinList   = [  0, 0,
                              2 ];                            
 
 //骨牌設定測試1
-var polyominoCode       = Math.round(Math.random()*4);
+var polyominoCode       = getRandomInt(0,6);
 var polyominoArray      = JSON.parse(JSON.stringify(polyominoKindList[polyominoCode]));
 var polyominoColor      = polyominoColorList[polyominoCode];
 var polyominoSpin       = polyominoSpinList[polyominoCode];
-var nextPolyominoCode   = Math.round(Math.random()*4);
+var nextPolyominoCode   = getRandomInt(0,6);
 var nextPolyominoArray  = JSON.parse(JSON.stringify(polyominoKindList[nextPolyominoCode]));
 var nextPolyominoColor  = polyominoColorList[nextPolyominoCode];
 var nextPolyominoSpin   = polyominoSpinList[nextPolyominoCode];
@@ -88,7 +88,7 @@ function gameLoop(timestamp) {
 
     counter = counter+1;
     
-    if( counter%12===0 ){
+    if( counter%28===0 ){
         fall(timestamp);    
     }
 
@@ -306,7 +306,6 @@ function isNextOneBlocked(tempNextOneArray) {
     let yJudge = 0;
     let boolJudge  = false;
 
-
     for(let i=0; i<array.length; i++) {
         xJudge = array[i][0];
         yJudge = array[i][1];
@@ -356,7 +355,7 @@ function isSpinAble() {
     let yJudge    = array[0][1];
     let boolJudge = false;
 
-    if( xJudge>=1 && xJudge<=9 && yJudge>=1 && yJudge<=18 ){
+    if( xJudge>=1 && xJudge<=9 && yJudge>=1 && yJudge<=18 && polyominoCode!= 5){
         let grid_01   = arrayBackground[yJudge-1][xJudge-1];
         let grid_02   = arrayBackground[yJudge-1][xJudge];
         let grid_03   = arrayBackground[yJudge-1][xJudge+1];
@@ -368,7 +367,10 @@ function isSpinAble() {
         if( (grid_01+grid_02+grid_03+grid_04+grid_06+grid_07+grid_08+grid_09)===0 ) {
             boolJudge = true;
         }
+    }else if( polyominoCode=== 5){
+        boolJudge = false;    
     }
+
     return boolJudge;
 }
 
@@ -421,7 +423,7 @@ function summaryResults() {
 }
 
 function getNewPolyomino() {
-    let code = Math.round(Math.random()*4);
+    let code  = getRandomInt(0,6);
     let array = JSON.parse(JSON.stringify(polyominoKindList[code]));
     nextPolyominoCode   = code;
     nextPolyominoArray  = array;
@@ -435,7 +437,6 @@ function drawPolyomino() {
     let xOrder = 0;
     let yOrder = 0; 
     ctx.beginPath();
-    // ctx.fillStyle = "#ff00bc";
     ctx.fillStyle = polyominoColor;
     array.forEach(function(element) {
         xOrder = element[0];    
@@ -479,7 +480,7 @@ function drawScore() {
     ctx.clearRect(400, 0, 100, canvas.height);
     ctx.font = "15px Arial";
     ctx.fillStyle = "#000000";
-    ctx.fillText("Score:"+score, 420, 50);
+    ctx.fillText("Score:"+score, 420, 100);
     ctx.fillText("Next:", 420, 180);
     let array = JSON.parse(JSON.stringify(nextPolyominoArray));
     for (let i=0; i<array.length; i++){
@@ -494,22 +495,28 @@ function drawNextInfom(array) {
     ctx.beginPath();
     ctx.fillStyle = nextPolyominoColor;
     array.forEach(function(element) {
-        xOrder = element[0];    
-        yOrder = element[1];
-        ctx.fillRect(420+20*xOrder, 200+20*yOrder, 20, 20);
+        xOrder = element[0]+1;    
+        yOrder = element[1]+1;
+        ctx.fillRect(420+15*xOrder, 200+15*yOrder, 15, 15);
     });
     ctx.closePath();
  
     ctx.beginPath();
-    for( let i=420; i<=480; i=i+20 ) {
+    for( let i=420; i<=480; i=i+15 ) {
         ctx.moveTo(i,200);
         ctx.lineTo(i,260);
         ctx.stroke();
     }
-    for( let i=200; i<=260; i=i+20 ){
+    for( let i=200; i<=260; i=i+15 ){
         ctx.moveTo(420,i);
         ctx.lineTo(480,i);
         ctx.stroke();
     }
     ctx.closePath();
+}
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min; 
 }
